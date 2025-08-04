@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // Importiere useEffect
+import React, { useState, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -211,16 +211,17 @@ function App() {
     '9': initializeSequenzfelder(),
     '10': initializeSequenzfelder(),
   });
-  // Zustand Sichtbarkeit Kompetenzkarten
-  const [visibleKompetenzKarten, setVisibleKompetenzKarten] = useState(() => {
-    const initialVisibility = {};
-    ['5/6', '7/8', '9', '10'].forEach(jahrgang => {
-      initialVisibility[jahrgang] = kompetenzen.map(k => k.id); // Alle IDs sind sichtbar
-    });
-    return initialVisibility;
-  });
+  // Undo Button
+  const history = useRef([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
 
   const addItemToSequenzfeld = (sequenzId, item) => {
+    // Save for Undo
+    const currentAllSequenzfelder = JSON.parse(JSON.stringify(allSequenzfelder));
+    history.current = history.current.slice(0, historyIndex + 1);
+    history.current.push(currentAllSequenzfelder);
+    setHistoryIndex(history.current.length - 1);
+
     setAllSequenzfelder((prevAllFelder) => {
       const currentJahrgangFelder = prevAllFelder[selectedJahrgang];
       if (!currentJahrgangFelder) return prevAllFelder; // Sollte nicht passieren
@@ -234,13 +235,6 @@ function App() {
         return feld;
       });
 
-      if (item.type === 'KOMPETENZ_KARTE') {
-        setVisibleKompetenzKarten(prevVisible => ({
-          ...prevVisible,
-          [selectedJahrgang]: prevVisible[selectedJahrgang].filter(id => id !== item.id)
-        }));
-      }
-
 
       return {
         ...prevAllFelder,
@@ -250,15 +244,24 @@ function App() {
   };
 
   const resetSequenzfelder = () => {
+    //aktueller Zustand für Undo speichern
+    const currentAllSequenzfelder = JSON.parse(JSON.stringify(allSequenzfelder));
+    history.current = history.current.slice(0, historyIndex + 1);
+    history.current.push(currentAllSequenzfelder);
+    setHistoryIndex(history.current.length - 1);
+
     setAllSequenzfelder(prevAllFelder => ({
       ...prevAllFelder,
       [selectedJahrgang]: initializeSequenzfelder(), // Setzt nur die Sequenzen des aktuellen Jahrgangs zurück
     }));
+  };
 
-    setVisibleKompetenzKarten(prevVisible => ({
-      ...prevVisible,
-      [selectedJahrgang]: kompetenzen.map(k => k.id) // Alle IDs sind wieder sichtbar
-    }));
+  const undoLastAction = () => {
+    if (historyIndex > -1) {
+      const previousState = history.current[historyIndex];
+      setAllSequenzfelder(previousState);
+      setHistoryIndex(prevIndex => historyIndex - 1);
+    }
   };
 
   // Funktion zum Ändern des ausgewählten Jahrgangs
@@ -266,24 +269,21 @@ function App() {
     setSelectedJahrgang(event.target.value);
   };
 
-  // Filter die Kompetenzkarten basierend auf ihrer Sichtbarkeit für den aktuellen Jahrgang
-  const currentVisibleKompetenzen = kompetenzen.filter(k =>
-    visibleKompetenzKarten[selectedJahrgang]?.includes(k.id)
-  );
-
   return (
     <HashRouter>
       <DndProvider backend={HTML5Backend}>
         <Routes>
           <Route path="/" element={
             <MainPage
-              kompetenzen={currentVisibleKompetenzen}
+              kompetenzen={kompetenzen}
               wissensbestaende={currentWissensbestaende}
               sequenzfelder={allSequenzfelder[selectedJahrgang]}
               addItemToSequenzfeld={addItemToSequenzfeld}
               resetSequenzfelder={resetSequenzfelder}
               selectedJahrgang={selectedJahrgang}
               onJahrgangChange={handleJahrgangChange}
+              canUndo={historyIndex > -1} // Zustand Undo Button
+              undoLastAction={undoLastAction} // Undo Funktion
             />
           } />
           <Route
@@ -301,7 +301,7 @@ function App() {
   );
 }
 
-function MainPage({ kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, resetSequenzfelder, selectedJahrgang, onJahrgangChange }) {
+function MainPage({ kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, canUndo, undoLastAction, resetSequenzfelder, selectedJahrgang, onJahrgangChange }) {
   const navigate = useNavigate();
 
   return (
@@ -315,8 +315,11 @@ function MainPage({ kompetenzen, wissensbestaende, sequenzfelder, addItemToSeque
             <option value="10">10</option>
           </select>
           <button onClick={resetSequenzfelder} className="reset-button">
-              🔄 Reset
-            </button>
+            🔄 Reset
+          </button>
+          <button onClick={undoLastAction} disabled={!canUndo} className="reset-button">
+            ↩️ Undo
+          </button>
         </div>
       </div>
 
