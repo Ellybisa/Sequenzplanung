@@ -1,0 +1,64 @@
+.kompetenzkarte-container {
+  /* width: 200px;  Diese werden jetzt dynamisch gesetzt */
+  /* height: 120px; Diese werden jetzt dynamisch gesetzt */
+  perspective: 600px;
+  position: relative;
+  cursor: pointer;
+  margin: 10px;
+  transition: width 0.75s ease, height 0.75s ease, transform 0.75s; /* Übergang für dynamische Größenänderung */
+}
+
+.karte-vorderseite, .karte-rueckseite {
+  width: 100%; /* Nimmt die volle Breite des Containers ein */
+  height: 100%; /* Nimmt die volle Höhe des Containers ein */
+  background: #e0e0e0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.5s;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.25rem;
+
+  border: 3px solid #666;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px; /* Fügt etwas Innenabstand hinzu */
+  box-sizing: border-box; /* Stellt sicher, dass Padding in der Gesamtgröße enthalten ist */
+  /* overflow: auto; /* Ermöglicht Scrollen, wenn der Inhalt immer noch zu groß ist */
+}
+
+.karte-vorderseite {
+  z-index: 2;
+  transform: rotateY(0deg);
+}
+
+.karte-rueckseite {
+  background: #fcfcfc4d;
+  z-index: 1;
+  transform: rotateY(180deg);
+}
+
+.kompetenzkarte-container.umgedreht .karte-vorderseite {
+  transform: rotateY(180deg);
+}
+
+.kompetenzkarte-container.umgedreht .karte-rueckseite {
+  transform: rotateY(0deg);
+}
+
+table {
+  font-size: 0.8rem; /* Etwas kleinere Schrift für die Tabelle */
+  border-collapse: collapse;
+  width: 100%; /* Tabelle nimmt die volle Breite der Rückseite ein */
+}
+
+th, td {
+  border: 1px solid #999;
+  padding: 0.3em 0.4em; /* Angepasstes Padding für Zellen */
+  text-align: center;
+}

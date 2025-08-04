@@ -1,0 +1,168 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Neue Styles für die MainPage */
+.main-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 20px;
+  box-sizing: border-box; /* Stellt sicher, dass Padding in der Gesamtbreite enthalten ist */
+}
+
+.header-section {
+  display: flex;
+  justify-content: flex-start; /* Angepasst: Startet Elemente links */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Abstand zwischen Select und H1 */
+}
+
+.title-selector select {
+  padding: 8px 12px;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.page-title {
+  font-size: 2.8rem; /* Relativ große Schriftart für die Überschrift */
+  margin: 0;
+  color: #333;
+}
+
+.reset-button {
+  padding: 10px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background-color: #5078e4;
+  color: white;
+  transition: background-color 0.3s ease;
+  /* margin-left: auto;  Dies würde ihn wieder ganz nach rechts schieben, wenn er im Header bliebe */
+}
+
+.reset-button:hover {
+  background-color: #5078e4;
+}
+
+.content-area {
+  display: flex;
+  flex: 1; /* Nimmt den verbleibenden Platz ein */
+  gap: 20px;
+}
+
+.sequenzfelder-section {
+  flex: 6;
+  display: flex; /* Beibehalten, um Überschrift und Grid-Container zu flexen */
+  flex-direction: column;
+  gap: 15px; /* Abstand zwischen Header und Grid-Container */
+  padding-right: 20px;
+  border-right: 1px solid #eee;
+
+}
+
+.sequenzfelder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.sequenzfelder-grid-container {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 6 Spalten, flexibel */
+  gap: 15px; /* Abstand zwischen den Sequenzfeldern */
+  /* Optional: Wenn Sie die Reihen enger zusammenrücken möchten, können Sie hier row-gap anpassen */
+  row-gap: 5px; /* Weniger Platz zwischen den Reihen */
+}
+
+
+.wissensbestaende-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-left: 20px; /* Abstand zum linken Rand */
+  max-height: 500px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.wissensbestaende-section h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.wissensbestaende-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.kompetenzkarten-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #eee; /* Trennlinie */
+  flex-grow: 1;
+  min-height: 300px
+}
+
+.kompetenzkarten-section h2 {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.kompetenzkarten-list {
+  display: flex;
+  flex-wrap: wrap; /* Ermöglicht Umbruch, falls nicht genug Platz */
+  gap: 15px;
+  justify-content: center; /* Zentriert die Karten horizontal */
+}
