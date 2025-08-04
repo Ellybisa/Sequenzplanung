@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+// MultipleFiles/App.js
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
@@ -112,7 +113,6 @@ const ZUSAMMENFASSUNG = [
   // Mehr Kompetenzen nach Bedarf
 ];
 
-// Hilfsfunktion zum Initialisieren der Sequenzfelder für einen Jahrgang
 const initializeSequenzfelder = () =>
   Array.from({ length: 12 }, (_, i) => ({
     id: `s${i + 1}`,
@@ -120,20 +120,69 @@ const initializeSequenzfelder = () =>
     items: []
   }));
 
-function SequenzfeldDetailPage({ sequenzfelder, jahrgang }) {
+function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem }) {
   const { sequenzId } = useParams();
   const navigate = useNavigate();
-
-  // Zugriff auf die Sequenzfelder des aktuellen Jahrgangs
   const currentJahrgangSequenzfelder = sequenzfelder[jahrgang] || [];
   const feld = currentJahrgangSequenzfelder.find(f => f.id === sequenzId);
-
-  if (!feld) {
-    return <div>Sequenzfeld nicht gefunden.</div>;
-  }
-
   const kompetenzKarten = (feld.items || []).filter(i => i.type === 'KOMPETENZ_KARTE');
   const wissensBestaende = (feld.items || []).filter(i => i.type === 'WISSENSBESTAND');
+
+  // Funktion zum Markieren von Text
+  const handleHighlight = useCallback((itemId, type, indexOrRow, colIndex) => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const selectedText = range.toString();
+
+    if (selectedText.length > 0) {
+      const span = document.createElement('span');
+      span.style.backgroundColor = 'yellow';
+      range.surroundContents(span);
+
+      const updatedHtml = range.commonAncestorContainer.innerHTML;
+
+      let updatedItems;
+
+      if (type === 'WISSENSBESTAND') {
+        updatedItems = wissensBestaende.map(wb => {
+          if (wb.id === itemId) {
+            const newBeschreibung = [...wb.beschreibung];
+            newBeschreibung[indexOrRow] = updatedHtml;
+            return { ...wb, beschreibung: newBeschreibung };
+          }
+          return wb;
+        });
+      } else if (type === 'KOMPETENZ_KARTE') {
+        updatedItems = kompetenzKarten.map(kk => {
+          if (kk.id === itemId) {
+            const newRasterDaten = [...kk.rasterDaten];
+            const newKompetenzen = { ...newRasterDaten[indexOrRow].kompetenzen };
+            const key = Object.keys(newKompetenzen)[colIndex];
+            newKompetenzen[key] = updatedHtml;
+            newRasterDaten[indexOrRow] = { ...newRasterDaten[indexOrRow], kompetenzen: newKompetenzen };
+            return { ...kk, rasterDaten: newRasterDaten };
+          }
+          return kk;
+        });
+      }
+
+      updateSequenzfeldItem(sequenzId, {
+        ...feld,
+        items: feld.items.map(item => {
+          if (item.type === type && item.id === itemId) {
+            return updatedItems.find(updatedItem => updatedItem.id === itemId) || item;
+          }
+          return item;
+        })
+      });
+    }
+  }, [sequenzId, feld, wissensBestaende, kompetenzKarten, updateSequenzfeldItem]);
+
+    if (!feld) {
+    return <div>Sequenzfeld nicht gefunden.</div>;
+  }
 
   return (
     <div style={{ padding: 20 }}>
@@ -160,7 +209,11 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang }) {
                 {k.rasterDaten.map((reihe, i) => (
                   <tr key={i}>
                     {Object.values(reihe.kompetenzen).map((text, idx) => (
-                      <td key={idx}  dangerouslySetInnerHTML={{ __html: text }}></td>
+                      <td
+                        key={idx}
+                        dangerouslySetInnerHTML={{ __html: text }}
+                        onMouseUp={() => handleHighlight(k.id, 'KOMPETENZ_KARTE', i, idx)}
+                      ></td>
                     ))}
                   </tr>
                 ))}
@@ -179,7 +232,11 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang }) {
                   {w.beschreibung && w.beschreibung.length > 0 && (
                     <ul>
                       {w.beschreibung.map((desc, index) => (
-                        <li key={index}>{desc}</li>
+                        <li
+                          key={index}
+                          dangerouslySetInnerHTML={{ __html: desc }}
+                          onMouseUp={() => handleHighlight(w.id, 'WISSENSBESTAND', index)} // Event-Handler für Markierung
+                        ></li>
                       ))}
                     </ul>
                   )}
@@ -243,6 +300,30 @@ function App() {
     });
   };
 
+  // Neue Funktion zum Aktualisieren eines Items in einem Sequenzfeld
+  const updateSequenzfeldItem = useCallback((sequenzId, updatedFeld) => {
+    // Save for Undo
+    const currentAllSequenzfelder = JSON.parse(JSON.stringify(allSequenzfelder));
+    history.current = history.current.slice(0, historyIndex + 1);
+    history.current.push(currentAllSequenzfelder);
+    setHistoryIndex(history.current.length - 1);
+
+    setAllSequenzfelder(prevAllFelder => {
+      const currentJahrgangFelder = prevAllFelder[selectedJahrgang];
+      if (!currentJahrgangFelder) return prevAllFelder;
+
+      const updatedFelder = currentJahrgangFelder.map(feld =>
+        feld.id === sequenzId ? updatedFeld : feld
+      );
+
+      return {
+        ...prevAllFelder,
+        [selectedJahrgang]: updatedFelder,
+      };
+    });
+  }, [allSequenzfelder, historyIndex, selectedJahrgang]);
+
+
   const resetSequenzfelder = () => {
     //aktueller Zustand für Undo speichern
     const currentAllSequenzfelder = JSON.parse(JSON.stringify(allSequenzfelder));
@@ -256,13 +337,30 @@ function App() {
     }));
   };
 
-  const undoLastAction = () => {
+  const undoLastAction = useCallback(() => {
     if (historyIndex > -1) {
       const previousState = history.current[historyIndex];
       setAllSequenzfelder(previousState);
       setHistoryIndex(prevIndex => historyIndex - 1);
     }
-  };
+  }, [historyIndex]);
+
+  // Hotkey für Undo (Strg+Z)
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        event.preventDefault(); // Verhindert Standard-Browser-Undo
+        undoLastAction();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [undoLastAction]);
+
 
   // Funktion zum Ändern des ausgewählten Jahrgangs
   const handleJahrgangChange = (event) => {
@@ -292,6 +390,7 @@ function App() {
               <SequenzfeldDetailPage
                 sequenzfelder={allSequenzfelder} // Übergibt alle Sequenzfelder, da die Detailseite den Jahrgang nicht direkt kennt
                 jahrgang={selectedJahrgang} // Übergibt den aktuellen Jahrgang an die Detailseite
+                updateSequenzfeldItem={updateSequenzfeldItem} // Neue Prop übergeben
               />
             }
           />
