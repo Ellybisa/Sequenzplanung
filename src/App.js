@@ -110,7 +110,6 @@ const ZUSAMMENFASSUNG = [
       "9/10": "-	Bezug zum Akzent der Hinführung und/ der Hypothese (roter Faden)"
     }
   }
-  // Mehr Kompetenzen nach Bedarf
 ];
 
 const initializeSequenzfelder = () =>
@@ -300,7 +299,7 @@ function App() {
     });
   };
 
-  // Neue Funktion zum Aktualisieren eines Items in einem Sequenzfeld
+  // Funktion zum Aktualisieren eines Items in einem Sequenzfeld
   const updateSequenzfeldItem = useCallback((sequenzId, updatedFeld) => {
     // Save for Undo
     const currentAllSequenzfelder = JSON.parse(JSON.stringify(allSequenzfelder));
@@ -367,6 +366,46 @@ function App() {
     setSelectedJahrgang(event.target.value);
   };
 
+    //FUNKTIONEN FÜR SPEICHERN UND LADEN
+  const handleSave = async () => {
+    const dataToSave = {
+      sequenzfelder: allSequenzfelder,
+      selectedJahrgang: selectedJahrgang,
+      // Hier weitere Sachen, falls man mehr speichern will
+    };
+    // Überprüfen, ob die Electron-API verfügbar ist
+    if (window.electron && window.electron.saveData) {
+      const result = await window.electron.saveData(dataToSave);
+      if (result.success) {
+        alert(result.message);
+      } else {
+        alert(`Fehler: ${result.message}`);
+      }
+    } else {
+      alert('Electron API nicht verfügbar. Speichern nur in Electron-Umgebung möglich.');
+      console.warn('window.electron.saveData ist nicht definiert. Läuft die App in Electron?');
+    }
+  };
+  const handleLoad = async () => {
+    if (window.electron && window.electron.loadData) {
+      const result = await window.electron.loadData();
+      if (result.success && result.data) {
+        setAllSequenzfelder(result.data.sequenzfelder || initializeSequenzfelder());
+        setSelectedJahrgang(result.data.selectedJahrgang || '5/6');
+        // Setzen Sie hier auch andere geladene Zustände
+        alert('Projekt erfolgreich geladen!');
+        // Zurücksetzen des Undo-History
+        history.current = [];
+        setHistoryIndex(-1);
+      } else {
+        alert(`Fehler: ${result.message}`);
+      }
+    } else {
+      alert('Electron API nicht verfügbar. Laden nur in Electron-Umgebung möglich.');
+      console.warn('window.electron.loadData ist nicht definiert. Läuft die App in Electron?');
+    }
+  };
+
   return (
     <HashRouter>
       <DndProvider backend={HTML5Backend}>
@@ -382,6 +421,8 @@ function App() {
               onJahrgangChange={handleJahrgangChange}
               canUndo={historyIndex > -1} // Zustand Undo Button
               undoLastAction={undoLastAction} // Undo Funktion
+              onSave={handleSave} // Speichern Funktion
+              onLoad={handleLoad} // Laden Funktion
             />
           } />
           <Route
@@ -400,7 +441,7 @@ function App() {
   );
 }
 
-function MainPage({ kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, canUndo, undoLastAction, resetSequenzfelder, selectedJahrgang, onJahrgangChange }) {
+function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, canUndo, undoLastAction, resetSequenzfelder, selectedJahrgang, onJahrgangChange }) {
   const navigate = useNavigate();
 
   return (
@@ -418,6 +459,12 @@ function MainPage({ kompetenzen, wissensbestaende, sequenzfelder, addItemToSeque
           </button>
           <button onClick={undoLastAction} disabled={!canUndo} className="reset-button">
             ↩️ Undo
+          </button>
+          <button onClick={onSave} className="reset-button" style={{ backgroundColor: '#28a745' }}>
+            💾 Speichern
+          </button>
+          <button onClick={onLoad} className="reset-button" style={{ backgroundColor: '#007bff' }}>
+            📂 Laden
           </button>
         </div>
       </div>
