@@ -181,57 +181,65 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
   const wissensBestaende = (feld.items || []).filter(i => i.type === 'WISSENSBESTAND');
 
   // Funktion zum Markieren von Text
-  const handleHighlight = useCallback((itemId, type, rowIndex, jahrgangKey, stichpunktIndex) => {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
-
-    const range = selection.getRangeAt(0);
-    const selectedText = range.toString();
-
-    if (selectedText.length > 0) {
-      const span = document.createElement('span');
-      span.style.backgroundColor = 'yellow';
-      range.surroundContents(span);
-
-      const updatedHtml = range.commonAncestorContainer.innerHTML;
-
-      let updatedItems;
-
-      if (type === 'WISSENSBESTAND') {
-        updatedItems = wissensBestaende.map(wb => {
-          if (wb.id === itemId) {
-            const newBeschreibung = [...wb.beschreibung];
-            newBeschreibung[rowIndex] = updatedHtml;
-            return { ...wb, beschreibung: newBeschreibung };
-          }
-          return wb;
-        });
-      } else if (type === 'KOMPETENZ_KARTE') {
-        updatedItems = kompetenzKarten.map(kk => {
-          if (kk.id === itemId) {
-            const newRasterDaten = [...kk.rasterDaten];
-            const targetUnterkompetenz = { ...newRasterDaten[rowIndex] };
-            const targetJahrgangStichpunkte = [...targetUnterkompetenz.jahrgaenge[jahrgangKey]];
-            targetJahrgangStichpunkte[stichpunktIndex] = updatedHtml;
-            targetUnterkompetenz.jahrgaenge[jahrgangKey] = targetJahrgangStichpunkte;
-            newRasterDaten[rowIndex] = targetUnterkompetenz;
-            return { ...kk, rasterDaten: newRasterDaten };
-          }
-          return kk;
-        });
-      }
-
-      updateSequenzfeldItem(sequenzId, {
-        ...feld,
-        items: feld.items.map(item => {
-          if (item.type === type && item.id === itemId) {
-            return updatedItems.find(updatedItem => updatedItem.id === itemId) || item;
-          }
-          return item;
-        })
+  const handleHighlight = useCallback((itemId, type, rowIndex, jahrgangKey, stichpunktIndex, originalText) => {
+    const highlightTag = '<span style="background-color: yellow;">';
+    const highlightEndTag = '</span>';
+    // Hilfsfunktion zum Entfernen eines einzelnen Highlights
+    const removeSingleHighlight = (htmlString) => {
+      return htmlString.replace(highlightTag, '').replace(highlightEndTag, '');
+    };
+    let updatedItems;
+    if (type === 'WISSENSBESTAND') {
+      updatedItems = wissensBestaende.map(wb => {
+        if (wb.id === itemId) {
+          const newBeschreibung = wb.beschreibung.map((desc, idx) => {
+            if (idx === rowIndex) {
+              // Umschalten des Highlights für den geklickten Stichpunkt
+              return desc.includes(highlightTag) ? removeSingleHighlight(desc) : highlightTag + originalText + highlightEndTag;
+            }
+            return desc;
+          });
+          return { ...wb, beschreibung: newBeschreibung };
+        }
+        return wb;
+      });
+    } else if (type === 'KOMPETENZ_KARTE') {
+      updatedItems = kompetenzKarten.map(kk => {
+        if (kk.id === itemId) {
+          const newRasterDaten = kk.rasterDaten.map((unterkompetenz, uIdx) => {
+            if (uIdx === rowIndex) {
+              const targetUnterkompetenz = { ...unterkompetenz };
+              const targetJahrgangStichpunkte = { ...targetUnterkompetenz.jahrgaenge };
+              Object.keys(targetJahrgangStichpunkte).forEach(key => {
+                targetJahrgangStichpunkte[key] = targetJahrgangStichpunkte[key].map((stich, sIdx) => {
+                  if (key === jahrgangKey && sIdx === stichpunktIndex) {
+                    // Umschalten des Highlights für den geklickten Stichpunkt
+                    return stich.includes(highlightTag) ? removeSingleHighlight(stich) : highlightTag + originalText + highlightEndTag;
+                  }
+                  return stich;
+                });
+              });
+              return { ...targetUnterkompetenz, jahrgaenge: targetJahrgangStichpunkte };
+            }
+            return unterkompetenz;
+          });
+          return { ...kk, rasterDaten: newRasterDaten };
+        }
+        return kk;
       });
     }
+    updateSequenzfeldItem(sequenzId, {
+      ...feld,
+      items: feld.items.map(item => {
+        if (item.type === type && item.id === itemId) {
+          return updatedItems.find(updatedItem => updatedItem.id === itemId) || item;
+        }
+        return item;
+      })
+    });
   }, [sequenzId, feld, wissensBestaende, kompetenzKarten, updateSequenzfeldItem]);
+
+
 
     if (!feld) {
     return <div>Sequenzfeld nicht gefunden.</div>;
@@ -262,7 +270,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
               <tbody>
                 {k.rasterDaten.map((unterkompetenz, rowIndex) => (
                   <tr key={rowIndex}>
-                    <td>{unterkompetenz.titel}</td> {/* Titel der Unterkompetenz */}
+                    <td>{unterkompetenz.titel}</td> {}
                     {["5/6", "7/8", "9/10"].map((jahrgangKey, colIndex) => (
                       <td key={colIndex}>
                         <ul>
@@ -270,7 +278,8 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
                             <li
                               key={stichpunktIndex}
                               dangerouslySetInnerHTML={{ __html: stichpunkt }}
-                              onMouseUp={() => handleHighlight(k.id, 'KOMPETENZ_KARTE', rowIndex, jahrgangKey, stichpunktIndex)}
+                              onMouseUp={() => handleHighlight(k.id, 'KOMPETENZ_KARTE', rowIndex, jahrgangKey, stichpunktIndex, stichpunkt.replace(/<[^>]*>/g, ''))}
+                              style={{ cursor: 'pointer' }}
                             ></li>
                           ))}
                         </ul>
@@ -296,7 +305,8 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
                         <li
                           key={index}
                           dangerouslySetInnerHTML={{ __html: desc }}
-                          onMouseUp={() => handleHighlight(w.id, 'WISSENSBESTAND', index)} // Event-Handler für Markierung
+                          onMouseUp={() => handleHighlight(w.id, 'WISSENSBESTAND', index, null, null, desc.replace(/<[^>]*>/g, ''))}
+                          style={{ cursor: 'pointer' }}
                         ></li>
                       ))}
                     </ul>
