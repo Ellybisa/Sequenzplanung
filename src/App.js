@@ -12,7 +12,20 @@ import SequenzfeldDetailPage from './SequenzfeldDetailPage';
 import './App.css';
 // Importieren der Daten
 import wissensbestaende from './wissensbestaendeData';
-import { INHALTSANGABE, SCHLUSSTEIL } from './kompetenzData';
+import {
+  INHALTSANGABE,
+  SCHLUSSTEIL,
+  EINLEITUNG,
+  STOFFSAMMLUNG,
+  REZITATION,
+  HAUPTTEIL_DES_MGS,
+  ANALYSETEIL,
+  DEUTUNG,
+  PRAESENTATION,
+  SPRACHE,
+  EROERTERUNG_ARGUMENTATION
+} from './kompetenzData';
+
 
 const initializeSequenzfelder = () =>
   Array.from({ length: 12 }, (_, i) => ({
@@ -22,10 +35,20 @@ const initializeSequenzfelder = () =>
   }));
 
 function App() {
+  
   const [kompetenzen] = useState([
-    { id: 'k1', titel: 'INHALTSANGABE', rasterDaten: INHALTSANGABE },
-    { id: 'k2', titel: 'SCHLUSSTEIL', rasterDaten: SCHLUSSTEIL },
-  ]);
+  { id: 'k1', titel: 'INHALTSANGABE', rasterDaten: INHALTSANGABE },
+  { id: 'k2', titel: 'SCHLUSSTEIL', rasterDaten: SCHLUSSTEIL },
+  { id: 'k3', titel: 'EINLEITUNG', rasterDaten: EINLEITUNG },
+  { id: 'k4', titel: 'STOFFSAMMLUNG', rasterDaten: STOFFSAMMLUNG },
+  { id: 'k5', titel: 'REZITATION', rasterDaten: REZITATION },
+  { id: 'k6', titel: 'HAUPTTEIL DES MGS', rasterDaten: HAUPTTEIL_DES_MGS },
+  { id: 'k7', titel: 'ANALYSETEIL', rasterDaten: ANALYSETEIL },
+  { id: 'k8', titel: 'DEUTUNG', rasterDaten: DEUTUNG },
+  { id: 'k9', titel: 'PRÄSENTATION', rasterDaten: PRAESENTATION },
+  { id: 'k10', titel: 'SPRACHE', rasterDaten: SPRACHE },
+  { id: 'k11', titel: 'ERÖRTERUNG / ARGUMENTATION', rasterDaten: EROERTERUNG_ARGUMENTATION }
+]);
 
   // Zustand für den aktuell ausgewählten Jahrgang
   const [selectedJahrgang, setSelectedJahrgang] = useState('5/6'); // Standardwert
