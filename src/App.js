@@ -16,7 +16,7 @@ const wissensbestaende = {
     { id: 'w1', titel: 'Schreiben',
       beschreibung: ['Funktion & Form Schreibplan','Strategien der Textüberarbeitung und Fehlerberichtigung', 'einfache Merkmale der Textkohärenz: Satzverknüpfung']},
     { id: 'w2', titel: 'analysierendes Lesen',
-      beschreibung: ['Lesetechniken: Nutzung von Hilfsmitteln für organisierende Lesetechniken: Markierungen, Zwischenüberschriften, Kernsatz, Schlüsselbegriffe, Stichwörter',''] },
+      beschreibung: ['Lesetechniken: Nutzung von Hilfsmitteln für organisierende Lesetechniken: Markierungen, Zwischenüberschriften, Kernsatz, Schlüsselbegriffe, Stichwörter'] },
     { id: 'w3', titel: 'Textanalyse',
       beschreibung: ['Merkmale kontinuierlicher und diskontinuierlicher Texte',
         'Funktion und Wirkung ausgewählter sprachkünstlerischer Gestaltungsmittel, z.B. Alliteration, Metapher, Personifikation, Onomatopoesie, Vergleich und Wiederholung',
@@ -65,49 +65,102 @@ const wissensbestaende = {
     { id: 'w7', titel: 'Werk im Kontext seiner Literaturepoche', beschreibung: [] },
     ],
   };
-
-const SINNABSCHNITTE = [
+// Inhaltsangabe Kompetenz
+const INHALTSANGABE = [
   {
-    kompetenzen: {
-      "5/6": "- Sinnabschnitt als individuellen Gliederungsteil verstehen<br />-	Selektionsmechanismen ausprobieren (wie finde ich eine angemessene Anzahl an Sinnabschnitten? z.B. an Figuren oder an Strophen orientiert)",
-      "7/8": "-	Sinnabschnitte für Verschriftlichung nutzen können (insbesondere für Inhaltsangabe)<br />-	Anzahlsetzung verstehen (ca. 3-5)",
-      "9/10": "-	Verständnis für verschiedene Funktionen im Aufsatz verstehen<br />-	Selektion auch bei variabler Textlänge angemessen einsetzen"
+    titel: "SINNABSCHNITTE (INKL. LÄNGE)",
+    jahrgaenge: {
+      "5/6" : [
+        "Sinnabschnitte als individuelle Gliederungsteile verstehen",
+        "Selektionsmechanismen ausprobieren (wie finde ich eine angemessene Anzahl an Sinnabschnitten? z.B. an Figuren oder an Strophen orientiert)"
+      ],
+      "7/8" : [
+        "Sinnabschnitte für Verschriftlichung nutzen können (insbesondere für Inhaltsangabe)",
+        "Anzahlsetzung verstehen (ca. 3-5)"
+      ],
+      "9/10" : [
+        "Verständnis für verschiedene Funktionen im Aufsatz verstehen",
+        "Selektion auch bei variabler Textlänge angemessen einsetzen"
+      ]
     }
-  }
-];
-const GENERALISIERUNG = [
+  },
   {
-    kompetenzen: {
-      "5/6": "-	Fokus auf Kürze und Präzision",
-      "7/8": "-	Sinnabschnitte im Rahmen des Gesamttextes verallgemeinern",
-      "9/10": "-	Verallgemeinerung der Sinnabschnitte und Funktionen"
+    titel: "GENERALISIERUNG",
+    jahrgaenge: {
+      "5/6" : [
+        "Fokus auf Kürze und Präzision",
+        "Sinnabschnitte im Rahmen des Gesamttextes verallgemeinern"
+      ],
+      "7/8" : [
+        "Sinnabschnitte im Rahmen des Gesamttextes verallgemeinern"
+      ],
+      "9/10" : [
+        "Verallgemeinerung der Sinnabschnitte und Funktionen"
+      ]
     }
-  }
-];
-const KONKRETISIERUNG = [
+  },
   {
-    kompetenzen: {
-      "5/6": "-	W-Fragen kennen und ansetzen",
-      "7/8": "-	Reduktion von konkreten Informationen<br />-	Inbezugsetzen zur Generalisierung",
-      "9/10": "-	+ eindeutiger Zusammenhang angesetzten Funktion"
+    titel: "KONKRETISIERUNG",
+    jahrgaenge: {
+      "5/6" : [
+        "W-Fragen kennen und ansetzen"
+      ],
+      "7/8" : [
+        "Reduktion von konkreten Informationen",
+        "Inbezugsetzen zur Generalisierung"
+      ],
+      "9/10" : [
+        "+ eindeutiger Zusammenhang angesetzten Funktion"
+      ]
     }
-  }
-];
-const WORTWAHL = [
+  },
   {
-    kompetenzen: {
-      "5/6": "-	Wortschatz ausbauen (Fokus auf Verben, Substantive, Adjektive<br />-	Arbeit mit Synonymen",
-      "7/8": "-	Vertiefung Wortschatzarbeit (besonders Fachsprache)<br />-	Sprachstil des Textes verstehen und den Anforderungen der Aufgabenstellung entsprechend schreiben",
-      "9/10": "-	Vertiefung Wortschatz (bes. wissenschaftliche Terminologie)<br />-	Sprachstil des Textes verstehen und in angemessener Art und Weise innerhalb der eigenen Sprache professionell umsetzen (z.B. Einsatz direkter Zitate)"
+    titel: "VERWENDUNG EIGENER WORTWAHL",
+    jahrgaenge: {
+      "5/6" : [
+        "Wortschatz ausbauen (Fokus auf Verben, Substantive, Adjektive",
+        "Arbeit mit Synonymen"
+      ],
+      "7/8" : [
+        "Vertiefung Wortschatzarbeit (besonders Fachsprache)",
+        "Sprachstil des Textes verstehen und den Anforderungen der Aufgabenstellung entsprechend schreiben"
+      ],
+      "9/10" : [
+        "Vertiefung Wortschatz (bes. wissenschaftliche Terminologie)",
+        "Sprachstil des Textes verstehen und in angemessener Art und Weise innerhalb der eigenen Sprache professionell umsetzen (z.B. Einsatz direkter Zitate)"
+      ]
     }
-  }
+  },
 ];
-const ZUSAMMENFASSUNG = [
+// Schlussteil Kompetenz
+const SCHLUSSTEIL = [
   {
-    kompetenzen: {
-      "5/6": "-	Zusammenfassung Inhalt ohne gehäufte Wiederholung, keine Beurteilung, keine neuen inhaltlichen Ergebnisse",
-      "7/8": "-	Eigene Erkenntnisse verallgemeinern (Zsf.)",
-      "9/10": "-	Bezug zum Akzent der Hinführung und/ der Hypothese (roter Faden)"
+    titel: "ZUSAMMENFASSUNG",
+    jahrgaenge: {
+      "5/6" : [
+        "Zusammenfassung des Inhalts ohne gehäufte Wiederholung",
+        "keine Beurteilung, keine neuen inhaltlichen Ergebnisse"
+      ],
+      "7/8" : [
+        "Eigene Erkenntnisse verallgemeinern (Zsf.)"
+      ],
+      "9/10" : [
+        "Bezug zum Akzent der Hinführung und/ der Hypothese (roter Faden)"
+      ]
+    }
+  },
+  {
+    titel: "SCHLUSSFOLGERUNG",
+    jahrgaenge: {
+      "5/6" : [
+        "Schlussfolgerung als angeleitet",
+      ],
+      "7/8" : [
+        "Ansaätze einer sinnvollen Schlussfolgerung",
+      ],
+      "9/10" : [
+        "Schlussfolgerung in Bezug eines eigenen Akzentes (z.B. Aktualisierung, Historisierung, Politisierung)"
+      ]
     }
   }
 ];
@@ -128,7 +181,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
   const wissensBestaende = (feld.items || []).filter(i => i.type === 'WISSENSBESTAND');
 
   // Funktion zum Markieren von Text
-  const handleHighlight = useCallback((itemId, type, indexOrRow, colIndex) => {
+  const handleHighlight = useCallback((itemId, type, rowIndex, jahrgangKey, stichpunktIndex) => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
 
@@ -148,7 +201,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
         updatedItems = wissensBestaende.map(wb => {
           if (wb.id === itemId) {
             const newBeschreibung = [...wb.beschreibung];
-            newBeschreibung[indexOrRow] = updatedHtml;
+            newBeschreibung[rowIndex] = updatedHtml;
             return { ...wb, beschreibung: newBeschreibung };
           }
           return wb;
@@ -157,10 +210,11 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
         updatedItems = kompetenzKarten.map(kk => {
           if (kk.id === itemId) {
             const newRasterDaten = [...kk.rasterDaten];
-            const newKompetenzen = { ...newRasterDaten[indexOrRow].kompetenzen };
-            const key = Object.keys(newKompetenzen)[colIndex];
-            newKompetenzen[key] = updatedHtml;
-            newRasterDaten[indexOrRow] = { ...newRasterDaten[indexOrRow], kompetenzen: newKompetenzen };
+            const targetUnterkompetenz = { ...newRasterDaten[rowIndex] };
+            const targetJahrgangStichpunkte = [...targetUnterkompetenz.jahrgaenge[jahrgangKey]];
+            targetJahrgangStichpunkte[stichpunktIndex] = updatedHtml;
+            targetUnterkompetenz.jahrgaenge[jahrgangKey] = targetJahrgangStichpunkte;
+            newRasterDaten[rowIndex] = targetUnterkompetenz;
             return { ...kk, rasterDaten: newRasterDaten };
           }
           return kk;
@@ -199,20 +253,28 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
             <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  {k.rasterDaten[0] && Object.keys(k.rasterDaten[0].kompetenzen).map(key => (
-                    <th key={key}>{key}</th>
-                  ))}
+                  <th>Kompetenz</th> {}
+                  <th>5/6</th>
+                  <th>7/8</th>
+                  <th>9/10</th>
                 </tr>
               </thead>
               <tbody>
-                {k.rasterDaten.map((reihe, i) => (
-                  <tr key={i}>
-                    {Object.values(reihe.kompetenzen).map((text, idx) => (
-                      <td
-                        key={idx}
-                        dangerouslySetInnerHTML={{ __html: text }}
-                        onMouseUp={() => handleHighlight(k.id, 'KOMPETENZ_KARTE', i, idx)}
-                      ></td>
+                {k.rasterDaten.map((unterkompetenz, rowIndex) => (
+                  <tr key={rowIndex}>
+                    <td>{unterkompetenz.titel}</td> {/* Titel der Unterkompetenz */}
+                    {["5/6", "7/8", "9/10"].map((jahrgangKey, colIndex) => (
+                      <td key={colIndex}>
+                        <ul>
+                          {unterkompetenz.jahrgaenge[jahrgangKey] && unterkompetenz.jahrgaenge[jahrgangKey].map((stichpunkt, stichpunktIndex) => (
+                            <li
+                              key={stichpunktIndex}
+                              dangerouslySetInnerHTML={{ __html: stichpunkt }}
+                              onMouseUp={() => handleHighlight(k.id, 'KOMPETENZ_KARTE', rowIndex, jahrgangKey, stichpunktIndex)}
+                            ></li>
+                          ))}
+                        </ul>
+                      </td>
                     ))}
                   </tr>
                 ))}
@@ -249,11 +311,8 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
 
 function App() {
   const [kompetenzen] = useState([
-    { id: 'k1', titel: 'SINNABSCHNITTE', rasterDaten: SINNABSCHNITTE },
-    { id: 'k2', titel: 'GENERALISIERUNG', rasterDaten: GENERALISIERUNG },
-    { id: 'k3', titel: 'KONKRETISIERUNG', rasterDaten: KONKRETISIERUNG },
-    { id: 'k4', titel: 'VERWENDUNG EIGENER WORTWAHL', rasterDaten: WORTWAHL },
-    { id: 'k5', titel: 'ZUSAMMENFASSUNG', rasterDaten: ZUSAMMENFASSUNG }
+    { id: 'k1', titel: 'INHALTSANGABE', rasterDaten: INHALTSANGABE },
+    { id: 'k1', titel: 'INHALTSANGABE', rasterDaten: SCHLUSSTEIL },
   ]);
 
   // Zustand für den aktuell ausgewählten Jahrgang

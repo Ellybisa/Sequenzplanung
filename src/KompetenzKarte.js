@@ -25,22 +25,19 @@ function KompetenzKarte({ id, titel, rasterDaten }) {
       rueckseiteRef.current.style.height = 'auto';
 
       // Messen der benötigten Breite und Höhe
-      // scrollWidth/scrollHeight geben die tatsächliche Größe des Inhalts zurück, auch wenn er überläuft
       const contentWidth = rueckseiteRef.current.scrollWidth;
       const contentHeight = rueckseiteRef.current.scrollHeight;
 
       // Setzen der gemessenen Dimensionen, mit einer Mindestgröße
       setCardDimensions({
         width: Math.max(200, contentWidth + 40), // +40 für Padding und etwas Spielraum
-        height: Math.max(120, contentHeight + 40) // +40 für Padding und etwas Spielraum
+        height: Math.max(120, contentHeight + 40)
       });
-
-      // Zurücksetzen der temporären Styles, damit CSS wieder die Kontrolle hat
+      // Zurücksetzen der Stile, um die automatische Größe zu entfernen
       rueckseiteRef.current.style.width = '';
       rueckseiteRef.current.style.height = '';
 
     } else if (!istUmdreht) {
-      // Zurück zur Standardgröße, wenn nicht umgedreht
       setCardDimensions({ width: 200, height: 120 });
     }
   }, [istUmdreht]);
@@ -52,8 +49,8 @@ function KompetenzKarte({ id, titel, rasterDaten }) {
       ref={drag}
       style={{
         opacity: isDragging ? 0.5 : 1,
-        width: cardDimensions.width,   // Dynamische Breite anwenden
-        height: cardDimensions.height  // Dynamische Höhe anwenden
+        width: cardDimensions.width,
+        height: cardDimensions.height
       }}
     >
       {!istUmdreht && (
@@ -65,16 +62,24 @@ function KompetenzKarte({ id, titel, rasterDaten }) {
           <table>
             <thead>
               <tr>
-                {rasterDaten[0] && Object.keys(rasterDaten[0].kompetenzen).map((k) => (
-                  <th key={k}>{k}</th>
-                ))}
+                <th>Kompetenz</th> {}
+                <th>5/6</th>
+                <th>7/8</th>
+                <th>9/10</th>
               </tr>
             </thead>
             <tbody>
-              {rasterDaten.map((reihe, idx) => (
+              {rasterDaten.map((unterkompetenz, idx) => (
                 <tr key={idx}>
-                  {Object.values(reihe.kompetenzen).map((text, i) => (
-                    <td key={i} dangerouslySetInnerHTML={{ __html: text }}></td>
+                  <td>{unterkompetenz.titel}</td> {}
+                  {["5/6", "7/8", "9/10"].map((jahrgang, i) => (
+                    <td key={i}>
+                      <ul>
+                        {unterkompetenz.jahrgaenge[jahrgang] && unterkompetenz.jahrgaenge[jahrgang].map((stichpunkt, j) => (
+                          <li key={j} dangerouslySetInnerHTML={{ __html: stichpunkt }}></li>
+                        ))}
+                      </ul>
+                    </td>
                   ))}
                 </tr>
               ))}
