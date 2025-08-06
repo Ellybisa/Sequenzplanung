@@ -24,7 +24,7 @@ const initializeSequenzfelder = () =>
 function App() {
   const [kompetenzen] = useState([
     { id: 'k1', titel: 'INHALTSANGABE', rasterDaten: INHALTSANGABE },
-    { id: 'k1', titel: 'INHALTSANGABE', rasterDaten: SCHLUSSTEIL },
+    { id: 'k2', titel: 'SCHLUSSTEIL', rasterDaten: SCHLUSSTEIL },
   ]);
 
   // Zustand für den aktuell ausgewählten Jahrgang
@@ -91,7 +91,7 @@ function App() {
         [selectedJahrgang]: updatedFelder,
       };
     });
-  }, [allSequenzfelder, historyIndex, selectedJahrgang]);
+  }, [historyIndex, selectedJahrgang]);
 
 
   const resetSequenzfelder = () => {
@@ -161,7 +161,18 @@ function App() {
     if (window.electron && window.electron.loadData) {
       const result = await window.electron.loadData();
       if (result.success && result.data) {
-        setAllSequenzfelder(result.data.sequenzfelder || initializeSequenzfelder());
+        setAllSequenzfelder(
+          result.data.sequenzfelder &&
+          typeof result.data.sequenzfelder === 'object' &&
+          Object.keys(result.data.sequenzfelder).length === 4
+            ? result.data.sequenzfelder
+            : {
+                '5/6': initializeSequenzfelder(),
+                '7/8': initializeSequenzfelder(),
+                '9': initializeSequenzfelder(),
+                '10': initializeSequenzfelder(),
+              }
+        );
         setSelectedJahrgang(result.data.selectedJahrgang || '5/6');
         // Setzen Sie hier auch andere geladene Zustände
         alert('Projekt erfolgreich geladen!');
