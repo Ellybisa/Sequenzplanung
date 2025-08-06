@@ -6,8 +6,8 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
   const navigate = useNavigate();
   const currentJahrgangSequenzfelder = sequenzfelder[jahrgang] || [];
   const feld = currentJahrgangSequenzfelder.find(f => f.id === sequenzId);
-  const kompetenzKarten = (feld.items || []).filter(i => i.type === 'KOMPETENZ_KARTE');
-  const wissensBestaende = (feld.items || []).filter(i => i.type === 'WISSENSBESTAND');
+  const kompetenzKarten = React.useMemo(() => (feld.items || []).filter(i => i.type === 'KOMPETENZ_KARTE'), [feld.items]);
+  const wissensBestaende = React.useMemo(() => (feld.items || []).filter(i => i.type === 'WISSENSBESTAND'), [feld.items]);
 
   // Funktion zum Markieren von Text
   const handleHighlight = useCallback((itemId, type, rowIndex, jahrgangKey, stichpunktIndex, originalText) => {
@@ -15,7 +15,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
     const highlightEndTag = '</span>';
     // Hilfsfunktion zum Entfernen eines einzelnen Highlights
     const removeSingleHighlight = (htmlString) => {
-      return htmlString.replace(highlightTag, '').replace(highlightEndTag, '');
+      return htmlString.replace(/<span style="background-color: yellow;">/g, '').replace(/<\/span>/g, '');
     };
     let updatedItems;
     if (type === 'WISSENSBESTAND') {
@@ -66,7 +66,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
         return item;
       })
     });
-  }, [sequenzId, feld, wissensBestaende, kompetenzKarten, updateSequenzfeldItem]);
+  }, [sequenzId, feld, updateSequenzfeldItem]);
 
 
 
@@ -90,7 +90,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
             <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse' }}>
               <thead>
                 <tr>
-                  <th>Kompetenz</th> {}
+                  <th>Kompetenz</th>
                   <th>5/6</th>
                   <th>7/8</th>
                   <th>9/10</th>
@@ -99,7 +99,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
               <tbody>
                 {k.rasterDaten.map((unterkompetenz, rowIndex) => (
                   <tr key={rowIndex}>
-                    <td>{unterkompetenz.titel}</td> {}
+                    <td>{unterkompetenz.titel}</td>
                     {["5/6", "7/8", "9/10"].map((jahrgangKey, colIndex) => (
                       <td key={colIndex}>
                         <ul>
