@@ -31,14 +31,14 @@ function KompetenzKarte({ id, titel, rasterDaten }) {
       // Setzen der gemessenen Dimensionen, mit einer Mindestgröße
       setCardDimensions({
         width: Math.max(200, contentWidth + 40), // +40 für Padding und etwas Spielraum
-        height: Math.max(120, contentHeight + 40)
+        height: Math.max(80, contentHeight + 40)
       });
       // Zurücksetzen der Stile, um die automatische Größe zu entfernen
       rueckseiteRef.current.style.width = '';
       rueckseiteRef.current.style.height = '';
 
     } else if (!istUmdreht) {
-      setCardDimensions({ width: 200, height: 120 });
+      setCardDimensions({ width: 200, height: 80 });
     }
   }, [istUmdreht]);
 

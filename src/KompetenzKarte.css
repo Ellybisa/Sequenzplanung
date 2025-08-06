@@ -5,7 +5,7 @@
   position: relative;
   cursor: pointer;
   margin: 10px;
-  transition: width 0.75s ease, height 0.75s ease, transform 0.75s; /* Übergang für dynamische Größenänderung */
+  transition: width 0.75s ease, height 0.75s ease, transform 0.75s ease; /* Übergang für dynamische Größenänderung */
 }
 
 .karte-vorderseite, .karte-rueckseite {

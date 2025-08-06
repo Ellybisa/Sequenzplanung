@@ -3,7 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 
-import { HashRouter, Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
 
 import KompetenzKarte from './KompetenzKarte';
 import Wissensbestand from './Wissensbestand';
@@ -114,7 +114,7 @@ function App() {
         [selectedJahrgang]: updatedFelder,
       };
     });
-  }, [historyIndex, selectedJahrgang]);
+  }, [historyIndex, selectedJahrgang, allSequenzfelder]);
 
 
   const resetSequenzfelder = () => {
@@ -159,12 +159,28 @@ function App() {
   const handleJahrgangChange = (event) => {
     setSelectedJahrgang(event.target.value);
   };
+  
+  const [mainPageNotes, setMainPageNotes] = useState('');
+  const [sequenzNotes, setSequenzNotes] = useState({});
 
-    //FUNKTIONEN FÜR SPEICHERN UND LADEN
+  const handleMainPageNoteChange = (event) => {
+    setMainPageNotes(event.target.value);
+  };
+
+  const handleSequenzNoteChange = useCallback((sequenzId, notes) => {
+    setSequenzNotes(prevNotes => ({
+      ...prevNotes,
+      [sequenzId]: notes,
+    }));
+  }, []);
+
+  //FUNKTIONEN FÜR SPEICHERN UND LADEN
   const handleSave = async () => {
     const dataToSave = {
       sequenzfelder: allSequenzfelder,
       selectedJahrgang: selectedJahrgang,
+      mainPageNotes: mainPageNotes,
+      sequenzNotes: sequenzNotes,
       // Hier weitere Sachen, falls man mehr speichern will
     };
     // Überprüfen, ob die Electron-API verfügbar ist
@@ -197,6 +213,8 @@ function App() {
               }
         );
         setSelectedJahrgang(result.data.selectedJahrgang || '5/6');
+        setMainPageNotes(result.data.mainPageNotes || '');
+        setSequenzNotes(result.data.sequenzNotes || {});
         // Setzen Sie hier auch andere geladene Zustände
         alert('Projekt erfolgreich geladen!');
         // Zurücksetzen des Undo-History
@@ -228,6 +246,8 @@ function App() {
               undoLastAction={undoLastAction}
               onSave={handleSave}
               onLoad={handleLoad}
+              mainPageNotes={mainPageNotes}
+              onMainPageNoteChange={handleMainPageNoteChange}
             />
           } />
           <Route
@@ -237,6 +257,8 @@ function App() {
                 sequenzfelder={allSequenzfelder}
                 jahrgang={selectedJahrgang}
                 updateSequenzfeldItem={updateSequenzfeldItem}
+                sequenzNotes={sequenzNotes}
+                onSequenzNoteChange={handleSequenzNoteChange}
               />
             }
           />
@@ -246,7 +268,7 @@ function App() {
   );
 }
 
-function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, canUndo, undoLastAction, resetSequenzfelder, selectedJahrgang, onJahrgangChange }) {
+function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, canUndo, undoLastAction, resetSequenzfelder, selectedJahrgang, onJahrgangChange, mainPageNotes, onMainPageNoteChange }) {
   const navigate = useNavigate();
 
   return (
@@ -291,7 +313,7 @@ function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder
           </div>
         </div>
 
-        <div className="wissensbestaende-section">
+      <div className="wissensbestaende-section">
           <div className="wissensbestaende-list">
             {wissensbestaende.map(w => (
               <Wissensbestand key={w.id} id={w.id} titel={w.titel} beschreibung={w.beschreibung} />
@@ -299,17 +321,27 @@ function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder
           </div>
         </div>
       </div>
+      <div className = "bottom-sections-container">
+        <div className="kompetenzkarten-section">
+          <div className="kompetenzkarten-list">
+            {kompetenzen.map(k => (
+              <KompetenzKarte
+               key={k.id}
+                id={k.id}
+                titel={k.titel}
+                rasterDaten={k.rasterDaten}
+              />
+            ))}
+          </div>
+        </div>
 
-      <div className="kompetenzkarten-section">
-        <div className="kompetenzkarten-list">
-          {kompetenzen.map(k => (
-            <KompetenzKarte
-              key={k.id}
-              id={k.id}
-              titel={k.titel}
-              rasterDaten={k.rasterDaten}
+        <div className="notes-section-main">
+          <h2>Allgemeine Notizen</h2>
+            <textarea
+              value={mainPageNotes}
+              onChange={onMainPageNoteChange}
+              placeholder="Platz für Notizen..."
             />
-          ))}
         </div>
       </div>
     </div>

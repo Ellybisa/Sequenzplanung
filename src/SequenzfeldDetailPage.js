@@ -1,13 +1,18 @@
 import React, { useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';    
 
-function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem }) {
+function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem, sequenzNotes, onSequenzNoteChange }) {
   const { sequenzId } = useParams();
   const navigate = useNavigate();
   const currentJahrgangSequenzfelder = sequenzfelder[jahrgang] || [];
   const feld = currentJahrgangSequenzfelder.find(f => f.id === sequenzId);
   const kompetenzKarten = React.useMemo(() => (feld.items || []).filter(i => i.type === 'KOMPETENZ_KARTE'), [feld.items]);
   const wissensBestaende = React.useMemo(() => (feld.items || []).filter(i => i.type === 'WISSENSBESTAND'), [feld.items]);
+
+  const currentSequenzNotes = sequenzNotes[sequenzId] || '';
+  const handleDetailNotesChange = (event) => {
+    onSequenzNoteChange(sequenzId, event.target.value);
+  };
 
   // Funktion zum Markieren von Text
   const handleHighlight = useCallback((itemId, type, rowIndex, jahrgangKey, stichpunktIndex, originalText) => {
@@ -66,7 +71,7 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
         return item;
       })
     });
-  }, [sequenzId, feld, updateSequenzfeldItem]);
+  }, [sequenzId, feld, updateSequenzfeldItem, kompetenzKarten, wissensBestaende]);
 
 
 
@@ -144,6 +149,15 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem 
               ))}
         </ul>
       )}
+
+      <div className="notes-section-detail">
+        <h2>Notizen für {feld.titel}</h2>
+        <textarea
+          value={currentSequenzNotes}
+          onChange={handleDetailNotesChange}
+          placeholder={`Notizen für ${feld.titel}...`}
+        />
+      </div>
     </div>
   );
 }

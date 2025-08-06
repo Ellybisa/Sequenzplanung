@@ -147,12 +147,20 @@
   width: 100%;
 }
 
+.bottom-sections-container {
+      display: flex;
+      justify-content: space-between; /* Verteilt den Platz zwischen den Elementen */
+      align-items: flex-end;
+      margin-top: 30px;
+      gap: 20px;
+      flex-grow: 1;
+}
+
 .kompetenzkarten-section {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid #eee; /* Trennlinie */
   flex-grow: 1;
-  min-height: 300px
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 .kompetenzkarten-section h2 {
@@ -165,4 +173,62 @@
   flex-wrap: wrap; /* Ermöglicht Umbruch, falls nicht genug Platz */
   gap: 15px;
   justify-content: center; /* Zentriert die Karten horizontal */
+}
+
+/* Styles für den Notizblock auf der MainPage */
+.notes-section-main {
+  width: 450px;
+  height: 400px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-self: flex-end;
+}
+
+.notes-section-main textarea {
+  width: 100%;
+  flex-grow: 1; /* Füllt den verfügbaren Platz aus */
+  min-height: 150px; /* Mindesthöhe für den Notizblock */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+/* Styles für den Notizblock auf der Detailseite (fixed position) */
+.notes-section-detail {
+  position: fixed;
+  top: 20px; 
+  right: 20px; 
+  width: 500px; 
+  height: 170px; 
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000; /* Stellt sicher, dass es über anderen Inhalten liegt */
+}
+
+.notes-section-detail h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.notes-section-detail textarea {
+  width: 100%;
+  flex-grow: 1;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  resize: none; /* Kein Resizing erlauben */
 }
