@@ -160,11 +160,19 @@ function App() {
     setSelectedJahrgang(event.target.value);
   };
   
-  const [mainPageNotes, setMainPageNotes] = useState('');
+  const [mainPageNotes, setMainPageNotes] = useState({
+    '5/6': '',
+    '7/8': '',
+    '9': '',
+    '10': '',
+  });
   const [sequenzNotes, setSequenzNotes] = useState({});
 
   const handleMainPageNoteChange = (event) => {
-    setMainPageNotes(event.target.value);
+    setMainPageNotes(prevNotes => ({
+      ...prevNotes,
+      [selectedJahrgang]: event.target.value, // Aktualisiere Notizen für den aktuellen Jahrgang
+    }));
   };
 
   const handleSequenzNoteChange = useCallback((sequenzId, notes) => {
@@ -213,7 +221,10 @@ function App() {
               }
         );
         setSelectedJahrgang(result.data.selectedJahrgang || '5/6');
-        setMainPageNotes(result.data.mainPageNotes || '');
+        setMainPageNotes(result.data.mainPageNotes && typeof result.data.mainPageNotes === 'object'
+          ? result.data.mainPageNotes
+          : { '5/6': '', '7/8': '', '9': '', '10': '' }
+        );
         setSequenzNotes(result.data.sequenzNotes || {});
         // Setzen Sie hier auch andere geladene Zustände
         alert('Projekt erfolgreich geladen!');
@@ -246,7 +257,7 @@ function App() {
               undoLastAction={undoLastAction}
               onSave={handleSave}
               onLoad={handleLoad}
-              mainPageNotes={mainPageNotes}
+              mainPageNotes={mainPageNotes[selectedJahrgang]}
               onMainPageNoteChange={handleMainPageNoteChange}
             />
           } />
@@ -336,7 +347,7 @@ function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder
         </div>
 
         <div className="notes-section-main">
-          <h2>Allgemeine Notizen</h2>
+          <h2>Allgemeine Notizen für {selectedJahrgang}</h2>
             <textarea
               value={mainPageNotes}
               onChange={onMainPageNoteChange}

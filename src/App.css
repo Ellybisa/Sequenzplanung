@@ -50,7 +50,6 @@
   display: flex;
   justify-content: flex-start; /* Angepasst: Startet Elemente links */
   align-items: center;
-  margin-bottom: 20px;
 }
 
 .title-selector {
@@ -101,25 +100,22 @@
   display: flex; /* Beibehalten, um Überschrift und Grid-Container zu flexen */
   flex-direction: column;
   gap: 15px; /* Abstand zwischen Header und Grid-Container */
-  padding-right: 20px;
   border-right: 1px solid #eee;
-
 }
 
 .sequenzfelder-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
   width: 100%;
 }
 
 .sequenzfelder-grid-container {
   display: grid;
   grid-template-columns: repeat(6, 1fr); /* 6 Spalten, flexibel */
-  gap: 15px; /* Abstand zwischen den Sequenzfeldern */
+  gap: 10px; /* Abstand zwischen den Sequenzfeldern */
   /* Optional: Wenn Sie die Reihen enger zusammenrücken möchten, können Sie hier row-gap anpassen */
-  row-gap: 5px; /* Weniger Platz zwischen den Reihen */
+  row-gap: 120px; /* Weniger Platz zwischen den Reihen */
 }
 
 
@@ -129,21 +125,20 @@
   flex-direction: column;
   align-items: flex-start;
   padding-left: 20px; /* Abstand zum linken Rand */
-  max-height: 500px;
+  max-height: 480px;
   overflow-y: auto;
   box-sizing: border-box;
 }
 
 .wissensbestaende-section h2 {
   margin-top: 0;
-  margin-bottom: 15px;
   color: #555;
 }
 
 .wissensbestaende-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   width: 100%;
 }
 
@@ -178,7 +173,7 @@
 /* Styles für den Notizblock auf der MainPage */
 .notes-section-main {
   width: 450px;
-  height: 400px;
+  height: 350px;
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   border-radius: 10px;
