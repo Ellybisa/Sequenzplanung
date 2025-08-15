@@ -116,6 +116,24 @@ function App() {
     });
   }, [historyIndex, selectedJahrgang, allSequenzfelder]);
 
+  const updateSequenzfeldTitle = useCallback((sequenzId, newTitle) => {
+    const currentAllSequenzfelder = JSON.parse(JSON.stringify(allSequenzfelder));
+    history.current = history.current.slice(0, historyIndex + 1);
+    history.current.push(currentAllSequenzfelder);
+    setHistoryIndex(history.current.length - 1);
+    setAllSequenzfelder(prevAllFelder => {
+      const currentJahrgangFelder = prevAllFelder[selectedJahrgang];
+      if (!currentJahrgangFelder) return prevAllFelder;
+      const updatedFelder = currentJahrgangFelder.map(feld =>
+        feld.id === sequenzId ? { ...feld, titel: newTitle } : feld
+      );
+      return {
+        ...prevAllFelder,
+        [selectedJahrgang]: updatedFelder,
+      };
+    });
+  }, [historyIndex, selectedJahrgang, allSequenzfelder]);
+
 
   const resetSequenzfelder = () => {
     //aktueller Zustand für Undo speichern
@@ -259,6 +277,7 @@ function App() {
               onLoad={handleLoad}
               mainPageNotes={mainPageNotes[selectedJahrgang]}
               onMainPageNoteChange={handleMainPageNoteChange}
+              updateSequenzfeldTitel={updateSequenzfeldTitle}
             />
           } />
           <Route
@@ -279,7 +298,9 @@ function App() {
   );
 }
 
-function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, canUndo, undoLastAction, resetSequenzfelder, selectedJahrgang, onJahrgangChange, mainPageNotes, onMainPageNoteChange }) {
+function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder, addItemToSequenzfeld, canUndo,
+  undoLastAction, resetSequenzfelder, selectedJahrgang, onJahrgangChange, mainPageNotes, onMainPageNoteChange,
+  updateSequenzfeldTitel }) {
   const navigate = useNavigate();
 
   return (
@@ -319,6 +340,7 @@ function MainPage({ onSave, onLoad, kompetenzen, wissensbestaende, sequenzfelder
                 titel={feld.titel}
                 onDropItem={(item) => addItemToSequenzfeld(feld.id, item)}
                 onClick={() => navigate(`/sequenz/${feld.id}`)}
+                onTitleChange={updateSequenzfeldTitel}
               />
             ))}
           </div>
