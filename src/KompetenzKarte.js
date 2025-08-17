@@ -5,7 +5,7 @@ import './KompetenzKarte.css';
 function KompetenzKarte({ id, titel, rasterDaten }) {
   const [istUmdreht, setIstUmdreht] = useState(false);
   const rueckseiteRef = useRef(null);
-  const [cardDimensions, setCardDimensions] = useState({ width: 200, height: 120 }); // Zustand für dynamische Breite und Höhe
+  const [cardDimensions, setCardDimensions] = useState({ width: 200, height: 80 });
 
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'KOMPETENZ_KARTE',
