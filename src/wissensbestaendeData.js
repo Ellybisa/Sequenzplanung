@@ -1,6 +1,14 @@
 const wissensbestaende = {
   "5/6": [
-    { "id": "w1", "titel": "Schreiben",
+    { "id": "w1", "titel": "Sprechen & Zuhören",
+      "beschreibung": [
+        "Sprachhandlungen: Erzählen und Nacherzählen, Berichten und Beschreiben, Erklären und Erläutern, Instruieren",
+        "Gemeinsamkeiten und Unterschiede von Kontaktformen: Auskunft, Bitte und Entschuldigung",
+        "Kennzeichen von Gesprächsformen: Informationsgespräch, Telefongespräch, Sprachnachricht und Rollenspiel",
+        "Elemente des Gesprächs: Äußerung, Gesprächsbeitrag, Sprecherwechsel"
+      ]
+    },
+    { "id": "w2", "titel": "Schreiben",
       "beschreibung": [
         "Funktion & Form Schreibplan",
         "Formen der Visualisierung: Cluster, Mindmap",
@@ -8,14 +16,6 @@ const wissensbestaende = {
         "einfache Merkmale der Textkohärenz: Satzverknüpfung",
         "Zusammenhang von Schreibanlass und Textproduktion",
         "Merkmale von privaten und offiziellen Kontaktformen"
-      ]
-    },
-    { "id": "w2", "titel": "Sprechen & Zuhören",
-      "beschreibung": [
-        "Sprachhandlungen: Erzählen und Nacherzählen, Berichten und Beschreiben, Erklären und Erläutern, Instruieren",
-        "Gemeinsamkeiten und Unterschiede von Kontaktformen: Auskunft, Bitte und Entschuldigung",
-        "Kennzeichen von Gesprächsformen: Informationsgespräch, Telefongespräch, Sprachnachricht und Rollenspiel",
-        "Elemente des Gesprächs: Äußerung, Gesprächsbeitrag, Sprecherwechsel"
       ]
     },
     { "id": "w3", "titel": "Lesen",

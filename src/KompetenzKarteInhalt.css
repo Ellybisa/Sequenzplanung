@@ -1,0 +1,80 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Leicht ausgegrauter Hintergrund */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Stellt sicher, dass das Modal über allem anderen liegt */
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 80%; /* Etwas kleiner als der Bildschirm */
+  max-width: 900px; /* Maximale Breite */
+  max-height: 90%; /* Maximale Höhe */
+  overflow-y: auto; /* Scrollbar, falls Inhalt zu groß */
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.modal-close-button {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-close-button:hover {
+  color: #333;
+}
+
+.modal-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.modal-body th, .modal-body td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.modal-body th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+.modal-body ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.modal-body li {
+  margin-bottom: 5px;
+}
