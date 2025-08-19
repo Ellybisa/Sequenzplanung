@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const HIGHLIGHT_COLORS = [
@@ -95,6 +95,38 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem,
     });
   }, [sequenzId, feld, updateSequenzfeldItem, kompetenzKarten, wissensBestaende]);
 
+  const areAllKompetenzStichpunkteHighlighted = useMemo(() => {
+    if (kompetenzKarten.length === 0) return false;
+    for (const kk of kompetenzKarten) {
+      for (const unterkompetenz of kk.rasterDaten) {
+        const stichpunkte = unterkompetenz.jahrgaenge[jahrgang];
+        if (stichpunkte) {
+          for (let i = 0; i < stichpunkte.length; i++) {
+            const highlightState = (unterkompetenz.highlightStates && unterkompetenz.highlightStates[jahrgang] && unterkompetenz.highlightStates[jahrgang][i]) || 0;
+            if (highlightState === 0) { // 0 bedeutet keine Markierung
+              return false;
+            }
+          }
+        }
+      }
+    }
+    return true;
+  }, [kompetenzKarten, jahrgang]);
+
+  const areAllWissensbestandStichpunkteHighlighted = useMemo(() => {
+    if (wissensBestaende.length === 0) return false;
+    for (const wb of wissensBestaende) {
+      if (wb.beschreibung) {
+        for (let i = 0; i < wb.beschreibung.length; i++) {
+          const highlightState = (wb.highlightStates && wb.highlightStates[i]) || 0;
+          if (highlightState === 0) { // 0 bedeutet keine Markierung
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+  }, [wissensBestaende]);
 
   if (!feld) {
     return <div>Sequenzfeld nicht gefunden.</div>;
@@ -102,11 +134,17 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem,
 
   return (
     <div style={{ padding: 20 }}>
-      <button onClick={() => navigate(-1)} style={{ marginBottom: 20 }}>
-        ← Zurück
-      </button>
-
-      <h1>{feld.titel} - Details</h1>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
+        <button onClick={() => navigate(-1)} style={{ marginRight: 10 }}>
+          ← Zurück
+        </button>
+        <div className={`highlight-checkbox ${areAllKompetenzStichpunkteHighlighted ? 'highlighted' : ''}`}>
+          Kompetenzen
+        </div>
+        <div className={`highlight-checkbox ${areAllWissensbestandStichpunkteHighlighted ? 'highlighted' : ''}`} style={{ marginLeft: 10 }}>
+          Wissensbestände
+        </div>
+      </div>
 
       <h2>Kompetenzen</h2>
       {kompetenzKarten.length === 0 ? <p>Keine Kompetenzen vorhanden.</p> : (
