@@ -117,34 +117,30 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem,
               <thead>
                 <tr>
                   <th>Kompetenz</th>
-                  <th>5/6</th>
-                  <th>7/8</th>
-                  <th>9/10</th>
+                  <th>{jahrgang}</th>
                 </tr>
               </thead>
               <tbody>
                 {k.rasterDaten.map((unterkompetenz, rowIndex) => (
                   <tr key={rowIndex}>
                     <td>{unterkompetenz.titel}</td>
-                    {["5/6", "7/8", "9/10"].map((jahrgangKey, colIndex) => (
-                      <td key={colIndex}>
+                      <td>
                         <ul>
-                          {unterkompetenz.jahrgaenge[jahrgangKey] && unterkompetenz.jahrgaenge[jahrgangKey].map((stichpunkt, stichpunktIndex) => {
-                            const currentHighlightState = unterkompetenz.highlightStates && unterkompetenz.highlightStates[jahrgangKey]
-                              ? unterkompetenz.highlightStates[jahrgangKey][stichpunktIndex] || 0
+                          {unterkompetenz.jahrgaenge[jahrgang] && unterkompetenz.jahrgaenge[jahrgang].map((stichpunkt, stichpunktIndex) => {
+                            const currentHighlightState = unterkompetenz.highlightStates && unterkompetenz.highlightStates[jahrgang]
+                              ? unterkompetenz.highlightStates[jahrgang][stichpunktIndex] || 0
                               : 0;
                             return (
                               <li
                                 key={stichpunktIndex}
                                 dangerouslySetInnerHTML={{ __html: stichpunkt }}
-                                onMouseUp={() => handleHighlight(k.id, 'KOMPETENZ_KARTE', rowIndex, jahrgangKey, stichpunktIndex, stichpunkt.replace(/<[^>]*>/g, ''), currentHighlightState)}
+                                onMouseUp={() => handleHighlight(k.id, 'KOMPETENZ_KARTE', rowIndex, jahrgang, stichpunktIndex, stichpunkt.replace(/<[^>]*>/g, ''), currentHighlightState)}
                                 style={{ cursor: 'pointer' }}
                               ></li>
                             );
                           })}
                         </ul>
                       </td>
-                    ))}
                   </tr>
                 ))}
               </tbody>
