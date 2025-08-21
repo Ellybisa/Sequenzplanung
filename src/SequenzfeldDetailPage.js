@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const HIGHLIGHT_COLORS = [
@@ -21,6 +21,42 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem,
   const handleDetailNotesChange = (event) => {
     onSequenzNoteChange(sequenzId, event.target.value);
   };
+
+  const [showPromptBubble, setShowPromptBubble] = useState(false);
+
+  const generatePrompt = useCallback(() => {
+    let prompt = `Erstelle aus den Angaben zum Ablauf und der angehängten Datei eine Unterrichtssequenz für die Klassenstufe ${jahrgang} (Gymnasium in Sachsen-Anhalt).\n\n`;
+    prompt += `Ablauf Sequenz\n`;
+    prompt += `1. Thematische, problematisierende oder methodische Hinführung (1/2 Stunde)\n`;
+    prompt += `2. Verkürzte Einstiegsdiagnose zum antizipierten Endprodukt mit Fokus auf Kernkriterien, die das meiste abrufen (1/2 Stunde, entscheide selbst konkret)\n`;
+    prompt += `3. Hinführung zu den ersten Kernkriterien an passenden Inhalten inkl. Übung und Vertiefung (ca.3-8 Stunden, entscheide selbst konkret)\n`;
+    prompt += `4. Leistungskontrolle bzw. Übungsphase als Notenmöglichkeit der unter 3. geübten Aspekte (1-2Stunden, entscheide selbst konkret)\n`;
+    prompt += `5. Einführung weiterer Kriterien und kurze Elemente der Vertiefung/Übung vorherigen Kriterien (ca. 3-8Stunden, entscheide selbst konkret)\n`;
+    prompt += `6. Unter Umständen Leistungskontrolle bzw. Übungsphase als Notenmöglichkeit der unter 3. geübten Aspekte (1-2Stunden, entscheide selbst konkret)\n`;
+    prompt += `7. (wähle aus den Varianten aus, ca. 3-8Stunden, entscheide selbst konkret)\n`;
+    prompt += `   a. Vertiefende und zusammenfassende Elemente\n`;
+    prompt += `   b. Vermehrte Übungsphasen\n`;
+    prompt += `   c. Erarbeitungen hin zum Endprodukt\n`;
+    prompt += `8. (wähle aus den Varianten aus)\n`;
+    prompt += `   a. Enddiagnose zum kompletten Endprodukt inkl. Auswertung (2-4 Stunden, entscheide selbst konkret)\n`;
+    prompt += `   b. Präsentations- und Auswertungsphase (2-4Stunden, entscheide selbst konkret)\n`;
+    prompt += `Antizipierte Dauer: Minimum 18Stunden, Maximum 30Stunden\n`;
+    prompt += `Benenne ruhig konkrete Textbeispiele. Versuche dich aber länger an einzelnen Texten aufzuhalten.\n\n`;
+
+    // Hier könnte man den ganzen Prompt generieren lassen
+
+    return prompt;
+  }, [jahrgang]);
+
+  const copyPromptToClipboard = useCallback(() => {
+    const promptText = generatePrompt();
+    navigator.clipboard.writeText(promptText).then(() => {
+      alert('Prompt wurde in die Zwischenablage kopiert!');
+    }).catch(err => {
+      console.error('Fehler beim Kopieren des Prompts: ', err);
+      alert('Fehler beim Kopieren des Prompts.');
+    });
+  }, [generatePrompt]);
 
   // Funktion zum Entfernen aller Highlight-Tags
   const removeAllHighlights = (htmlString) => {
@@ -128,6 +164,46 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem,
     return true;
   }, [wissensBestaende]);
 
+  // Highlights exportieren
+  const exportHighlightedToTxt = useCallback(() => {
+    let exportContent = `Markierte Kompetenzen für Jahrgang ${jahrgang}:\n\n`;
+    kompetenzKarten.forEach(kk => {
+      kk.rasterDaten.forEach(unterkompetenz => {
+        const stichpunkte = unterkompetenz.jahrgaenge[jahrgang];
+        if (stichpunkte) {
+          stichpunkte.forEach((stichpunkt, stichpunktIndex) => {
+            const highlightState = (unterkompetenz.highlightStates && unterkompetenz.highlightStates[jahrgang] && unterkompetenz.highlightStates[jahrgang][stichpunktIndex]) || 0;
+            if (highlightState !== 0) { // Nur markierte Stichpunkte exportieren
+              exportContent += `- ${removeAllHighlights(stichpunkt)}\n`;
+            }
+          });
+        }
+      });
+    });
+    exportContent += `\nMarkierte Wissensbestände für Jahrgang ${jahrgang}:\n\n`;
+    wissensBestaende.forEach(wb => {
+      if (wb.beschreibung) {
+        wb.beschreibung.forEach((desc, index) => {
+          const highlightState = (wb.highlightStates && wb.highlightStates[index]) || 0;
+          if (highlightState !== 0) { // Nur markierte Stichpunkte exportieren
+            exportContent += `- ${removeAllHighlights(desc)}\n`;
+          }
+        });
+      }
+    });
+
+    const blob = new Blob([exportContent], { type: 'text/plain;charset=utf-8' });
+    const href = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = href;
+    link.download = `Markierte_Inhalte_Sequenz_${sequenzId}_Jahrgang_${jahrgang}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+    alert('Markierte Inhalte wurden exportiert!');
+  }, [kompetenzKarten, wissensBestaende, jahrgang, sequenzId]);
+
   if (!feld) {
     return <div>Sequenzfeld nicht gefunden.</div>;
   }
@@ -220,6 +296,23 @@ function SequenzfeldDetailPage({ sequenzfelder, jahrgang, updateSequenzfeldItem,
           onChange={handleDetailNotesChange}
           placeholder={`Notizen für ${feld.titel}...`}
         />
+      </div>
+
+      <div className="floating-button-container">
+        {showPromptBubble && (
+          <div className="floating-button-content">
+            <h3>Prompt zum Kopieren</h3>
+            <textarea
+              value={generatePrompt()}
+              readOnly
+            />
+            <button onClick={copyPromptToClipboard}>In Zwischenablage kopieren</button>
+            <button onClick={exportHighlightedToTxt} style={{ backgroundColor: '#007bff' }}>Markierte Inhalte exportieren</button>
+          </div>
+        )}
+        <button className="floating-button" onClick={() => setShowPromptBubble(!showPromptBubble)}>
+          💬
+        </button>
       </div>
     </div>
   );

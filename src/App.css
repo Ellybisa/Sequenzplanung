@@ -248,3 +248,84 @@
   color: #28a745;
   box-shadow: 0 0 8px rgba(40, 167, 69, 0.5);
 }
+
+/* Prompt Button Sequenzseite */
+.floating-button-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.floating-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.floating-button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+.floating-button-content {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 400px; 
+  max-height: 300px; 
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.floating-button-content::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px;
+  border-style: solid;
+  border-color: #ddd transparent transparent transparent;
+}
+
+.floating-button-content textarea {
+  width: 100%;
+  flex-grow: 1;
+  min-height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.floating-button-content button {
+  padding: 8px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.floating-button-content button:hover {
+  background-color: #218838;
+}
