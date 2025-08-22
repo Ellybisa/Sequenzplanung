@@ -5,13 +5,13 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 
 import { HashRouter, Routes, Route, useNavigate } from 'react-router-dom';
 
-import KompetenzKarte from './KompetenzKarte';
-import Wissensbestand from './Wissensbestand';
-import Sequenzfeld from './Sequenzfeld';
-import SequenzfeldDetailPage from './SequenzfeldDetailPage';
+import KompetenzKarte from './components/KompetenzKarten/KompetenzKarte';
+import Wissensbestand from './components/Wissensbestaende/Wissensbestand';
+import Sequenzfeld from './components/Sequenzfelder/Sequenzfeld';
+import SequenzfeldDetailPage from './components/Sequenzfelder/SequenzfeldDetailPage';
 import './App.css';
 // Importieren der Daten
-import wissensbestaende from './wissensbestaendeData';
+import wissensbestaende from './data/wissensbestaendeData';
 import {
   INHALTSANGABE,
   SCHLUSSTEIL,
@@ -24,7 +24,7 @@ import {
   PRAESENTATION,
   SPRACHE,
   EROERTERUNG_ARGUMENTATION
-} from './kompetenzData';
+} from './data/kompetenzData';
 
 
 const initializeSequenzfelder = () =>
